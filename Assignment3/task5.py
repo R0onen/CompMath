@@ -1,30 +1,31 @@
 import numpy as np
-import pandas as pd
-
-A = np.array([[4, -1, 0],
-              [-1, 4, -1],
-              [0, -1, 4]], dtype=float)
-b = np.array([15, 10, 10], dtype=float)
-
-x0 = np.zeros_like(b)
-def relaxation_method(A, b, x0, w, tol=1e-5, max_iter=100):
-    x = x0
-    n = len(b)
-    history = []
+from scipy.linalg import lu
+def jacobi_eigenvalue_method(A, tol=1e-6, max_iter=100):
+    n = A.shape[0]
+    V = np.eye(n)
     for _ in range(max_iter):
-        x_new = np.copy(x)
-        for i in range(n):
-            x_new[i] = (1 - w) * x[i] + (w / A[i, i]) * (b[i] - np.dot(A[i, :i], x_new[:i]) - np.dot(A[i, i+1:], x[i+1:]))
-        history.append(x_new)
-        if np.linalg.norm(x_new - x, ord=np.inf) < tol:
+        i, j = np.unravel_index(np.argmax(np.abs(np.triu(A, 1))), A.shape)
+        if np.abs(A[i, j]) < tol:
             break
-        x = x_new
-    return x_new, history
+        phi = 0.5 * np.arctan2(2 * A[i, j], A[j, j] - A[i, i])
+        R = np.eye(n)
+        R[i, i] = R[j, j] = np.cos(phi)
+        R[i, j] = -np.sin(phi)
+        R[j, i] = np.sin(phi)
+        A = R.T @ A @ R
+        V = V @ R
+    return np.diag(A), V
 
-solution_1, history_1 = relaxation_method(A, b, x0, w=1.1)
-solution_2, history_2 = relaxation_method(A, b, x0, w=1.5)
+A = np.array([[4, -2, 1],
+              [-2, 4, -2],
+              [1, -2, 3]], dtype=float)
 
-print("\nSolution for w=1.1:")
-print(solution_1)
-print("\nSolution for w=1.5:")
-print(solution_2)
+eigenvalues, eigenvectors = jacobi_eigenvalue_method(A)
+
+print("\nEigenvalues using Jacobi's method:")
+print(eigenvalues)
+
+# Compare with numpy.linalg.eigvals
+eigvals_np = np.linalg.eigvals(A)
+print("\nEigenvalues using numpy:")
+print(eigvals_np)

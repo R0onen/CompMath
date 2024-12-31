@@ -1,32 +1,36 @@
 import numpy as np
-import pandas as pd
-def gaussian_with_pivot(A, b):
-    n = len(b)
-    M = np.hstack((A, b.reshape(-1, 1)))
+from scipy.linalg import lu
 
-    for i in range(n):
-        # Pivoting
-        max_row = max(range(i, n), key=lambda r: abs(M[r, i]))
-        M[[i, max_row]] = M[[max_row, i]]
+# Given matrix A and vector b
+A = np.array([[2, 1, 1],
+              [4, -6, 0],
+              [-2, 7, 2]], dtype=float)
+b = np.array([5, -2, 9], dtype=float)
 
-        # Elimination
-        for j in range(i + 1, n):
-            factor = M[j, i] / M[i, i]
-            M[j, i:] -= factor * M[i, i:]
+# LU Decomposition
+P, L, U = lu(A)
 
-    # Back substitution
-    x = np.zeros(n)
-    for i in range(n - 1, -1, -1):
-        x[i] = (M[i, -1] - np.dot(M[i, i + 1:-1], x[i + 1:])) / M[i, i]
-    return x, M
+print("Permutation matrix P:")
+print(P)
+print("\nLower triangular matrix L:")
+print(L)
+print("\nUpper triangular matrix U:")
+print(U)
 
-A = np.array([[3, 2, -4], 
-              [2, 3, 3], 
-              [5, -3, 1]], dtype=float)
-b = np.array([3, 15, 14], dtype=float)
+# Solving Ly = Pb
+Pb = np.dot(P, b)
+y = np.linalg.solve(L, Pb)
 
-solution, upper_triangular = gaussian_with_pivot(A, b)
-print("\nUpper Triangular Matrix:")
-print(upper_triangular)
-print("\nSolution:")
-print(solution)
+# Solving Ux = y
+x = np.linalg.solve(U, y)
+
+print("\nSolution vector x:")
+print(x)
+
+# Compare with numpy.linalg.solve
+x_np = np.linalg.solve(A, b)
+print("\nSolution using numpy.linalg.solve:")
+print(x_np)
+
+# Verification
+assert np.allclose(x, x_np), "Solutions do not match!"

@@ -1,20 +1,30 @@
-from scipy.linalg import qr
 import numpy as np
-from scipy.linalg import lu
-# Given matrix A
-A = np.array([[4, 1, -2],
-              [1, 2, 0],
-              [-2, 0, 3]], dtype=float)
+import pandas as pd
 
-# Givens rotation
-_, R_givens = qr(A, mode='economic')
+A = np.array([[4, -1, 0],
+              [-1, 4, -1],
+              [0, -1, 4]], dtype=float)
+b = np.array([15, 10, 10], dtype=float)
 
-# Householder reduction
-Q_householder, R_householder = qr(A, mode='full')
+def gauss_seidel(A, b, x0, tol=1e-5, max_iter=100):
+    x = x0
+    n = len(b)
+    history = []
+    for _ in range(max_iter):
+        x_new = np.copy(x)
+        for i in range(n):
+            x_new[i] = (b[i] - np.dot(A[i, :i], x_new[:i]) - np.dot(A[i, i+1:], x[i+1:])) / A[i, i]
+        history.append(x_new)
+        if np.linalg.norm(x_new - x, ord=np.inf) < tol:
+            break
+        x = x_new
+    return x_new, history
 
-print("\nMatrix R using Givens method:")
-print(R_givens)
+x0 = np.zeros_like(b)
+solution, history = gauss_seidel(A, b, x0)
 
-print("\nMatrix Q and R using Householder method:")
-print(Q_householder)
-print(R_householder)
+df = pd.DataFrame(history, columns=['x1', 'x2', 'x3'])
+print("\nSolution:")
+print(solution)
+print("\nIterations Table:")
+print(df)

@@ -1,26 +1,32 @@
 import numpy as np
-import pandas as pd
+from scipy.linalg import lu
+# Power Iteration for the largest eigenvalue and eigenvector
+def power_method(A, v0, tol=1e-6, max_iter=1000):
+    v = v0 / np.linalg.norm(v0)
+    for i in range(max_iter):
+        w = np.dot(A, v)
+        lambda_new = np.dot(v.T, w)
+        v_new = w / np.linalg.norm(w)
+        if np.linalg.norm(v_new - v) < tol:
+            return lambda_new, v_new
+        v = v_new
+    raise ValueError("Power method did not converge")
 
-def gauss_jordan(A, b):
-    n = len(b)
-    M = np.hstack((A, b.reshape(-1, 1)))
+A = np.array([[2, -1, 0],
+              [-1, 2, -1],
+              [0, -1, 2]], dtype=float)
 
-    for i in range(n):
-        # Make diagonal 1
-        M[i] /= M[i, i]
-        for j in range(n):
-            if i != j:
-                M[j] -= M[j, i] * M[i]
+v0 = np.array([1, 0, 0], dtype=float)
+largest_eigenvalue, largest_eigenvector = power_method(A, v0)
 
-    return M[:, -1], M
+print("\nLargest Eigenvalue:")
+print(largest_eigenvalue)
+print("\nCorresponding Eigenvector:")
+print(largest_eigenvector)
 
-A = np.array([[2, 1, -1], 
-              [-3, -1, 2], 
-              [-2, 1, 2]], dtype=float)
-b = np.array([8, -11, -3], dtype=float)
-
-solution, diagonal_matrix = gauss_jordan(A, b)
-print("\nDiagonal Matrix:")
-print(diagonal_matrix)
-print("\nSolution:")
-print(solution)
+# Compare with numpy.linalg.eig
+eigvals, eigvecs = np.linalg.eig(A)
+print("\nEigenvalues using numpy:")
+print(eigvals)
+print("\nEigenvectors using numpy:")
+print(eigvecs[:, np.argmax(eigvals)])

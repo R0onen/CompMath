@@ -1,36 +1,74 @@
 import numpy as np
-import pandas as pd
+import matplotlib.pyplot as plt
 
-# System of equations: Ax = b
-A = np.array([[4, -1, 0],
-              [-1, 4, -1],
-              [0, -1, 4]], dtype=float)
-b = np.array([15, 10, 10], dtype=float)
+# Task 1: Iterative Matrix Inversion
 
-# Check diagonal dominance
-is_diag_dominant = all(2 * abs(A[i, i]) > np.sum(abs(A[i, :])) for i in range(len(A)))
-print("Diagonal dominance criterion satisfied:", is_diag_dominant)
+def iterative_matrix_inversion(A, tol=1e-6, max_iter=100):
+    """Computes the inverse of matrix A iteratively."""
+    n = A.shape[0]
+    trace = np.trace(A)
+    B = np.eye(n) / trace  # Initial guess B = (1/tr(A)) * I
+    I = np.eye(n)  # Identity matrix
 
-# Jacobi method
-def jacobi(A, b, x0, tol=1e-5, max_iter=100):
-    D = np.diag(np.diag(A))
-    R = A - D
-    x = x0
-    history = []
-    for _ in range(max_iter):
-        x_new = np.dot(np.linalg.inv(D), b - np.dot(R, x))
-        history.append(x_new)
-        if np.linalg.norm(x_new - x, ord=np.inf) < tol:
+    for k in range(max_iter):
+        R = I - np.dot(A, B)
+        B_new = B + np.dot(B, R)
+
+        # Convergence check
+        if np.linalg.norm(R, ord=np.inf) < tol:
+            return B_new, k + 1  # Return inverse and iterations
+
+        B = B_new
+
+    raise ValueError("Iterative method did not converge within max_iter steps.")
+
+# Given matrix
+A = np.array([
+    [4, 2, 0],
+    [2, 4, 2],
+    [0, 2, 4]
+], dtype=float)
+
+# Compute inverse iteratively
+try:
+    B_iterative, iterations = iterative_matrix_inversion(A)
+    print("Iterative Inverse Matrix:")
+    print(B_iterative)
+    print(f"Converged in {iterations} iterations.")
+except ValueError as e:
+    print(e)
+
+# Compare with numpy.linalg.inv
+B_numpy = np.linalg.inv(A)
+print("\nNumpy Inverse Matrix:")
+print(B_numpy)
+
+# Error comparison
+error = np.linalg.norm(B_iterative - B_numpy, ord=np.inf)
+print(f"\nError between iterative and numpy inverse: {error:.6e}")
+
+# Visualization of Convergence (optional)
+def convergence_analysis(A, tol=1e-6, max_iter=100):
+    trace = np.trace(A)
+    B = np.eye(A.shape[0]) / trace
+    I = np.eye(A.shape[0])
+    errors = []
+
+    for k in range(max_iter):
+        R = I - np.dot(A, B)
+        errors.append(np.linalg.norm(R, ord=np.inf))
+        if errors[-1] < tol:
             break
-        x = x_new
-    return x_new, history
+        B = B + np.dot(B, R)
 
-x0 = np.zeros_like(b)
-solution, history = jacobi(A, b, x0)
+    return errors
 
-# Display results
-df = pd.DataFrame(history, columns=['x1', 'x2', 'x3'])
-print("\nSolution:")
-print(solution)
-print("\nIterations Table:")
-print(df)
+errors = convergence_analysis(A)
+plt.figure(figsize=(8, 6))
+plt.semilogy(errors, marker='o', label="Residual Norm")
+plt.title("Convergence Analysis of Iterative Matrix Inversion")
+plt.xlabel("Iteration")
+plt.ylabel("Residual Norm (log scale)")
+plt.grid()
+plt.legend()
+plt.show()
