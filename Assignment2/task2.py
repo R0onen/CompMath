@@ -20,10 +20,10 @@ def gaussian_with_pivot(A, b):
         x[i] = (M[i, -1] - np.dot(M[i, i + 1:-1], x[i + 1:])) / M[i, i]
     return x, M
 
-A = np.array([[3, 2, -4], 
-              [2, 3, 3], 
-              [5, -3, 1]], dtype=float)
-b = np.array([3, 15, 14], dtype=float)
+A = np.array([[2, 3, 1], 
+              [4, 11, -1], 
+              [-2, 1, 7]], dtype=float)
+b = np.array([10, 33, 15], dtype=float)
 
 solution, upper_triangular = gaussian_with_pivot(A, b)
 print("\nUpper Triangular Matrix:")

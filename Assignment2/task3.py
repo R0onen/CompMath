@@ -14,10 +14,10 @@ def gauss_jordan(A, b):
 
     return M[:, -1], M
 
-A = np.array([[2, 1, -1], 
-              [-3, -1, 2], 
-              [-2, 1, 2]], dtype=float)
-b = np.array([8, -11, -3], dtype=float)
+A = np.array([[1, 1, 1], 
+              [2, -3, 4], 
+              [3, 4, 5]], dtype=float)
+b = np.array([9, 13, 40], dtype=float)
 
 solution, diagonal_matrix = gauss_jordan(A, b)
 print("\nDiagonal Matrix:")

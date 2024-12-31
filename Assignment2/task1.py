@@ -2,10 +2,10 @@ import numpy as np
 import pandas as pd
 
 # System of equations: Ax = b
-A = np.array([[4, -1, 0],
-              [-1, 4, -1],
-              [0, -1, 4]], dtype=float)
-b = np.array([15, 10, 10], dtype=float)
+A = np.array([[10, -1, -2],
+              [-2, 10, -1],
+              [-1, -2, 10]], dtype=float)
+b = np.array([5, -6, 15], dtype=float)
 
 # Check diagonal dominance
 is_diag_dominant = all(2 * abs(A[i, i]) > np.sum(abs(A[i, :])) for i in range(len(A)))

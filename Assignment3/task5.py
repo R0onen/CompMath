@@ -16,9 +16,9 @@ def jacobi_eigenvalue_method(A, tol=1e-6, max_iter=100):
         V = V @ R
     return np.diag(A), V
 
-A = np.array([[4, -2, 1],
-              [-2, 4, -2],
-              [1, -2, 3]], dtype=float)
+A = np.array([[1, 1, 0.5],
+              [1, 1, 0.25],
+              [0.5, 0.25, 2]], dtype=float)
 
 eigenvalues, eigenvectors = jacobi_eigenvalue_method(A)
 

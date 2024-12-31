@@ -24,9 +24,9 @@ def iterative_matrix_inversion(A, tol=1e-6, max_iter=100):
 
 # Given matrix
 A = np.array([
-    [4, 2, 0],
-    [2, 4, 2],
-    [0, 2, 4]
+    [5, 2, 1],
+    [2, 6, 3],
+    [1, 3, 7]
 ], dtype=float)
 
 # Compute inverse iteratively

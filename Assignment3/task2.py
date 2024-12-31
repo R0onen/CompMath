@@ -2,10 +2,11 @@ import numpy as np
 from scipy.linalg import lu
 
 # Given matrix A and vector b
-A = np.array([[2, 1, 1],
-              [4, -6, 0],
-              [-2, 7, 2]], dtype=float)
-b = np.array([5, -2, 9], dtype=float)
+A = np.array([[10, -1, 2, 0],
+              [-1, 11, -11, 3],
+              [2, -1, 10, -1],
+                [0, 3, -1, 8]], dtype=float)
+b = np.array([5, 20, -10, 15], dtype=float)
 
 # LU Decomposition
 P, L, U = lu(A)

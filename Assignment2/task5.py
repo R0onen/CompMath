@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 
-A = np.array([[4, -1, 0],
-              [-1, 4, -1],
-              [0, -1, 4]], dtype=float)
-b = np.array([15, 10, 10], dtype=float)
+A = np.array([[5, 1, 1],
+              [1, 4, 2],
+              [1, 1, 5]], dtype=float)
+b = np.array([10, 12, 15], dtype=float)
 
 x0 = np.zeros_like(b)
 def relaxation_method(A, b, x0, w, tol=1e-5, max_iter=100):

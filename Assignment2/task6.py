@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-A = np.array([[1, 1.01], 
-              [1.01, 1]], dtype=float)
-b = np.array([2, 2.01], dtype=float)
+A = np.array([[1.001, 0.999], 
+              [1.002, 1.0]], dtype=float)
+b = np.array([2, 2.001], dtype=float)
 
 # Analytical solution
 x_analytical = np.linalg.solve(A, b)
